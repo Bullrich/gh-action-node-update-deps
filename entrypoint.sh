@@ -20,29 +20,13 @@ if [ -n "${NPM_SCOPE}" ] && [ -n "${NPM_REGISTRY}" ]; then
   echo "${NPM_REGISTRY_PATH}:always-auth=true" >> .npmrc
 fi
 
-npx npm-check-updates -u -t ${TARGET_VERSION}
-
-if [ "${PACKAGE_MANAGER}" == 'npm' ]; then
-  npm i --package-lock-only
-  npm audit fix --force --audit-level=none  # Best effort only
-elif [ "${PACKAGE_MANAGER}" == 'yarn' ]; then
-  yarn install
-else
-  echo "Invalid package manager '${PACKAGE_MANAGER}'. Please set 'package-manager' to either 'npm' or 'yarn'."
-  exit 1
+if [ -n "${BUMP_VERSION}" ]; then
+  npx update-by-scope ${NPM_SCOPE}
 fi
 
 if $(git diff-index --quiet HEAD); then
   echo 'No dependencies needed to be updated!'
   exit 0
-fi
-
-if [ -n "${BUMP_VERSION}" ]; then
-  if [ "${PACKAGE_MANAGER}" == 'npm' ]; then
-    npm version --no-git-tag-version ${BUMP_VERSION}
-  elif [ "${PACKAGE_MANAGER}" == 'yarn' ]; then
-    yarn version --no-git-tag-version "--${BUMP_VERSION}"
-  fi
 fi
 
 RUN_LABEL="${GITHUB_WORKFLOW}@${GITHUB_RUN_NUMBER}"
@@ -63,7 +47,7 @@ git commit -am "${COMMIT_MSG}"
 git push origin ${PR_BRANCH}
 
 DEFAULT_BRANCH=$(curl --silent \
-  --url https://api.github.com/repos/${GITHUB_REPOSITORY} \
+  --url https://${GITHUB_API_URL}/repos/${GITHUB_REPOSITORY} \
   --header "authorization: Bearer ${GITHUB_TOKEN}" \
   --header 'content-type: application/json' \
   --fail | jq -r .default_branch)

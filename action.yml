@@ -1,8 +1,8 @@
-name: Update Node Dependencies
+name: Update Scope Node Dependencies
 branding:
   icon: package
-  color: green
-description: Updates Node dependencies and creates a pull request with the changes.
+  color: blue
+description: Updates Node dependencies within a scope and creates a pull request with the changes.
 inputs:
   bump-version:
     description: If set, bumps the package version based on value (e.g. patch).
@@ -18,10 +18,10 @@ inputs:
     default: github-actions[bot]
   npm-registry-scope:
     description: NPM registry scope
-    default: Packages of this scope will use the registry defined in 'npm-registry-url'.
+    required: true
   npm-registry-url:
     description: NPM registry to used for scope defined in `npm-registry-scope`. Must start with https://.
-    default: ''
+    required: true
   package-manager:
     description: Set to 'yarn' to use yarn. Defaults to npm.
     default: npm
