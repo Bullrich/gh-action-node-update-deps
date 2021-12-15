@@ -4,9 +4,6 @@ branding:
   color: blue
 description: Updates Node dependencies within a scope and creates a pull request with the changes.
 inputs:
-  bump-version:
-    description: If set, bumps the package version based on value (e.g. patch).
-    default: ''
   commit-message-prefix:
     description: Prefix to use for commit messages.
     default: chore
@@ -22,28 +19,19 @@ inputs:
   npm-registry-url:
     description: NPM registry to used for scope defined in `npm-registry-scope`. Must start with https://.
     required: true
-  package-manager:
-    description: Set to 'yarn' to use yarn. Defaults to npm.
-    default: npm
   pre-commit-script:
     description: A command to run before committing the dependency changes (e.g. npm run build).
   pull-request-labels:
     description: Comma-delimited labels to apply to the pull request.
     default: dependencies
-  target-version:
-    description: Target version to upgrade to; latest, newest, greatest, minor, patch.
-    default: latest
 runs:
   using: docker
   image: Dockerfile
   args:
     - ${{ inputs.git-user-name }}
     - ${{ inputs.git-user-email }}
-    - ${{ inputs.package-manager }}
-    - ${{ inputs.bump-version }}
     - ${{ inputs.pre-commit-script }}
     - ${{ inputs.pull-request-labels }}
-    - ${{ inputs.target-version }}
     - ${{ inputs.commit-message-prefix }}
     - ${{ inputs.npm-registry-scope }}
     - ${{ inputs.npm-registry-url }}

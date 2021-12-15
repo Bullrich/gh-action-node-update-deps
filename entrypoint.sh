@@ -3,14 +3,11 @@ set -eu
 
 GIT_USER_NAME=${1}
 GIT_USER_EMAIL=${2}
-PACKAGE_MANAGER=${3}
-BUMP_VERSION=${4}
-PRE_COMMIT_SCRIPT=${5}
-PULL_REQUEST_LABELS=${6}
-TARGET_VERSION=${7}
-COMMIT_MSG_PREFIX=${8}
-NPM_SCOPE=${9}
-NPM_REGISTRY=${10}
+PRE_COMMIT_SCRIPT=${3}
+PULL_REQUEST_LABELS=${4}
+COMMIT_MSG_PREFIX=${5}
+NPM_SCOPE=${6}
+NPM_REGISTRY=${7}
 
 if [ -n "${NPM_SCOPE}" ] && [ -n "${NPM_REGISTRY}" ]; then
   NPM_REGISTRY_PATH=${NPM_REGISTRY#https:}
@@ -20,9 +17,7 @@ if [ -n "${NPM_SCOPE}" ] && [ -n "${NPM_REGISTRY}" ]; then
   echo "${NPM_REGISTRY_PATH}:always-auth=true" >> .npmrc
 fi
 
-if [ -n "${BUMP_VERSION}" ]; then
-  npx update-by-scope ${NPM_SCOPE}
-fi
+npx update-by-scope ${NPM_SCOPE}
 
 if $(git diff-index --quiet HEAD); then
   echo 'No dependencies needed to be updated!'
