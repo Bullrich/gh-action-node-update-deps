@@ -45,7 +45,7 @@ git config --global --add hub.host "${GITHUB_SERVER_URL}"
 git push origin ${PR_BRANCH}
 
 DEFAULT_BRANCH=$(curl --silent \
-  --url https://${GITHUB_API_URL}/repos/${GITHUB_REPOSITORY} \
+  --url ${GITHUB_API_URL}/repos/${GITHUB_REPOSITORY} \
   --header "authorization: Bearer ${GITHUB_TOKEN}" \
   --header 'content-type: application/json' \
   --fail | jq -r .default_branch)
