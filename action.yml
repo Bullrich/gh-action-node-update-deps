@@ -24,6 +24,10 @@ inputs:
   pull-request-labels:
     description: Comma-delimited labels to apply to the pull request.
     default: dependencies
+  requested-user:
+    description: User to request a review from
+  requested-team:
+    description: Team to request a review from
 runs:
   using: docker
   image: Dockerfile
@@ -35,3 +39,5 @@ runs:
     - ${{ inputs.commit-message-prefix }}
     - ${{ inputs.npm-registry-scope }}
     - ${{ inputs.npm-registry-url }}
+    - ${{ inputs.requested-user }}
+    - ${{ inputs.requested-team }}

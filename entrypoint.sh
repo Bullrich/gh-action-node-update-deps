@@ -8,6 +8,8 @@ PULL_REQUEST_LABELS=${4}
 COMMIT_MSG_PREFIX=${5}
 NPM_SCOPE=${6}
 NPM_REGISTRY=${7}
+REQUESTED_USER=${8}
+REQUESTED_TEAM=${9}
 
 export GITHUB_HOST=${GITHUB_SERVER_URL}
 
@@ -55,11 +57,31 @@ git fetch origin ${DEFAULT_BRANCH}
 
 echo "Server is ${GITHUB_SERVER_URL} and default branch is ${DEFAULT_BRANCH}"
 
-curl \
+PULL_URL=$(curl \
   -X POST \
   -H "Accept: application/vnd.github.v3+json" \
   -H "authorization: Bearer ${GITHUB_TOKEN}" \
   ${GITHUB_API_URL}/repos/${GITHUB_REPOSITORY}/pulls \
-  -d "{\"head\":\"${PR_BRANCH}\",\"base\":\"${DEFAULT_BRANCH}\",\"title\":\"${COMMIT_MSG}\"}"
+  -d "{\"head\":\"${PR_BRANCH}\",\"base\":\"${DEFAULT_BRANCH}\",\"title\":\"${COMMIT_MSG}\"}" \
+  | jq -r '._links.self.href')
+
+if [ -n "${REQUESTED_USER}" ] || [ -n "${REQUESTED_TEAM}" ]; then
+  if [ -n "${REQUESTED_USER}" ];then
+    REVIEWERS='"reviewers": ["'${REQUESTED_USER}'"]'
+    if [ -n "${REQUESTED_TEAM}" ];then
+        REVIEWERS="${REVIEWERS},"
+    fi
+  fi
+  if [ -n "${REQUESTED_TEAM}" ];then
+    REVIEWERS='{'${REVIEWERS}' "team_reviewers": ["'${REQUESTED_TEAM}'"]}'
+  fi
+
+  curl \
+    -X POST \
+    -H "Accept: application/vnd.github.v3+json" \
+    -H "authorization: Bearer ${GITHUB_TOKEN}" \
+    ${PULL_URL}/requested_reviewers \
+    -d $REVIEWERS
+fi
 
 echo "Created Pull Request!"

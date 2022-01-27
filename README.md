@@ -31,4 +31,6 @@ jobs:
           npm-registry-url: 'https://domain/pkgs'   # Registry where the scope can be available. Optional.
           pre-commit-script: npm run build          # defaults to not running anything
           pull-request-labels: test                 # defaults to 'dependencies'
+          requested-user: bullrich                  # Not required. User to request the review
+          requested-team: frontend-devs             # Not required. Team to request the review
 ```
