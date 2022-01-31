@@ -69,14 +69,12 @@ PULL_URL=$(curl \
   | jq -r '._links.self.href')
 
 if [ -n "${REQUESTED_USER}" ] || [ -n "${REQUESTED_TEAM}" ]; then
-  if [ -n "${REQUESTED_USER}" ];then
-    REVIEWERS='"reviewers": ["'${REQUESTED_USER}'"]'
-    if [ -n "${REQUESTED_TEAM}" ];then
-        REVIEWERS="${REVIEWERS},"
-    fi
-  fi
-  if [ -n "${REQUESTED_TEAM}" ];then
-    REVIEWERS='{'${REVIEWERS}' "team_reviewers": ["'${REQUESTED_TEAM}'"]}'
+  if [ -n "${REQUESTED_USER}" ] && [ -n "${REQUESTED_TEAM}" ]; then
+    REVIEWERS='{"reviewers":["'${REQUESTED_USER}'"],"team_reviewers":["'${REQUESTED_TEAM}'"]}'
+  elif [ -n "${REQUESTED_USER}" ];then
+    REVIEWERS='{"reviewers":["'${REQUESTED_USER}'"]}'
+  elif [ -n "${REQUESTED_TEAM}" ];then
+    REVIEWERS='{"team_reviewers":["'${REQUESTED_TEAM}'"]}'
   fi
 
   curl \
