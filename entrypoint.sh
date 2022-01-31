@@ -42,7 +42,10 @@ if [ -n "${PRE_COMMIT_SCRIPT}" ]; then
   ${PRE_COMMIT_SCRIPT}
 fi
 
-git checkout -- .npmrc
+if [ -e .npmrc ]; then
+  git checkout -- .npmrc
+fi
+
 git commit -am "${COMMIT_MSG}"
 git config --global --add hub.host "${GITHUB_SERVER_URL}"
 git push origin ${PR_BRANCH}
