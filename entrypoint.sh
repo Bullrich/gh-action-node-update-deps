@@ -21,7 +21,11 @@ if [ -n "${NPM_SCOPE}" ] && [ -n "${NPM_REGISTRY}" ]; then
   echo "${NPM_REGISTRY_PATH}:always-auth=true" >> .npmrc
 fi
 
-npx update-by-scope ${NPM_SCOPE}
+if [ -f "yarn.lock" ]; then
+  yarn upgrade --latest --scope ${NPM_SCOPE}
+else
+  npx update-by-scope ${NPM_SCOPE}
+fi
 
 if $(git diff-index --quiet HEAD); then
   echo 'No dependencies needed to be updated!'
